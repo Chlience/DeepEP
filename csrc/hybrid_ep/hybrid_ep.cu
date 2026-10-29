@@ -177,7 +177,8 @@ HybridEPBuffer::dispatch(
          c10::optional<torch::Tensor> probs,
          c10::optional<torch::Tensor> scaling_factor,
          HandleImpl handle,
-         bool with_probs) {
+         bool with_probs,
+         c10::optional<int64_t> num_dispatched_tokens) {
   auto config = handle.config;
   // Check the input tensors
   assert(hidden.device().is_cuda());
@@ -203,6 +204,8 @@ HybridEPBuffer::dispatch(
   args.rdma_to_attn_map = handle.rdma_to_attn_map;
   args.attn_to_rdma_map = handle.attn_to_rdma_map;
   args.num_dispatched_tokens_tensor = handle.num_dispatched_tokens_tensor;
+  args.num_dispatched_tokens =
+      num_dispatched_tokens.has_value() ? num_dispatched_tokens.value() : -1;
   args.num_of_tokens_per_rank = handle.num_of_tokens_per_rank;
   args.enable_permute = false;
   args.stream = at::cuda::getCurrentCUDAStream();
@@ -359,6 +362,7 @@ HybridEPBuffer::combine_with_unpermute(
         HandleImpl handle,
         c10::optional<int64_t> pad_multiple,
         bool fuse_unpermute_combine,
+        bool non_blocking,
         bool with_probs)
 {
   auto config = handle.config;
@@ -397,6 +401,7 @@ HybridEPBuffer::combine_with_unpermute(
   args.attn_to_rdma_map = handle.attn_to_rdma_map;
   args.num_of_tokens_per_rank = handle.num_of_tokens_per_rank;
   args.fuse_unpermute_combine = fuse_unpermute_combine;
+  args.non_blocking = non_blocking;
   args.enable_unpermute = true;
   args.stream = at::cuda::getCurrentCUDAStream();
   args.dense_chunk_layout = handle.dense_chunk_layout;

@@ -47,7 +47,8 @@ public:
   dispatch(torch::Tensor hidden, c10::optional<torch::Tensor> probs,
            c10::optional<torch::Tensor> scaling_factor,
            HandleImpl handle,
-           bool with_probs);
+           bool with_probs,
+           c10::optional<int64_t> num_dispatched_tokens);
 
   std::tuple<torch::Tensor, torch::Tensor>
   combine(torch::Tensor hidden, c10::optional<torch::Tensor> probs,
@@ -72,6 +73,7 @@ public:
           HandleImpl handle,
           c10::optional<int64_t> pad_multiple,
           bool fuse_unpermute_combine,
+          bool non_blocking,
           bool with_probs);       
 
 private:

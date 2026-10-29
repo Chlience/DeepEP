@@ -201,7 +201,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
              py::arg("probs") = c10::nullopt,
              py::arg("scaling_factor") = c10::nullopt,
              py::arg("handle"),
-             py::arg("with_probs"))
+             py::arg("with_probs"),
+             py::arg("num_dispatched_tokens") = c10::nullopt)
         .def("combine", &HybridEPBuffer::combine, py::kw_only(),
              py::arg("hidden"),
              py::arg("probs") = c10::nullopt,
@@ -222,6 +223,7 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
              py::arg("handle"),
              py::arg("pad_multiple") = std::nullopt,
              py::arg("fuse_unpermute_combine") = false,
+             py::arg("non_blocking") = false,
              py::arg("with_probs") = false);    
     
   }
